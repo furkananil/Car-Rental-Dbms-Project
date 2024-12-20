@@ -1,6 +1,6 @@
 ﻿namespace Car_Rental_Dbms_Project
 {
-    partial class Musteri
+    partial class PersonelGiris
     {
         /// <summary>
         /// Required designer variable.
@@ -30,14 +30,14 @@
         {
             SuspendLayout();
             // 
-            // Musteri
+            // Personel
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Name = "Musteri";
+            Name = "Personel";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Musteri";
+            Text = "Personel";
             ResumeLayout(false);
         }
 

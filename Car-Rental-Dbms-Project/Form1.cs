@@ -14,7 +14,7 @@ namespace Car_Rental_Dbms_Project
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            Musteri musteri = new Musteri();
+            MusteriGiris musteri = new MusteriGiris();
             musteri.Show();
             this.Hide();
         }

@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Car_Rental_Dbms_Project
 {
-    public partial class Musteri : Form
+    public partial class PersonelGiris : Form
     {
-        public Musteri()
+        public PersonelGiris()
         {
             InitializeComponent();
         }

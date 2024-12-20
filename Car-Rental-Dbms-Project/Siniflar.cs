@@ -39,16 +39,30 @@ namespace Car_Rental_Dbms_Project
         public int Yil { get; set; }
         public int KategoriId { get; set; }
 
-        // Navigation property
+        // Navigation properties
         public Arac_Kategorileri Kategori { get; set; }
+
+        // Yeni koleksiyonlar ekliyoruz
+        public ICollection<BinekArac> BinekAraclar { get; set; }  // Binek araçlar
+        public ICollection<TicariArac> TicariAraclar { get; set; }  // Ticari araçlar
     }
-    public class BinekArac : Arac
-    {
-        // Bu sınıf, Arac sınıfını miras alacak, ek özellikler burada tanımlanabilir.
-    }
+
     public class TicariArac : Arac
     {
-        // Bu sınıf, Arac sınıfını miras alacak, ek özellikler burada tanımlanabilir.
+        public int AracId { get; set; }
+        public int YukKapasitesi { get; set; }
+
+        // Arac navigation property is inherited from Arac class
+        public virtual Arac Arac { get; set; }
+    }
+
+    public class BinekArac : Arac
+    {
+        public int AracId { get; set; }
+        public decimal BagajHacmi { get; set; }
+
+        // Arac navigation property is inherited from Arac class
+        public virtual Arac Arac { get; set; }
     }
     public class Kiralama : BaseEntity
     {

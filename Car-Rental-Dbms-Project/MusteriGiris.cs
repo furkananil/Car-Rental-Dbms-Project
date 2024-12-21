@@ -16,7 +16,7 @@ namespace Car_Rental_Dbms_Project
 
         private void LoadCarsWithDetails()
         {
-            string connectionString = "Host=localhost;Username=postgres;Password=furkanbabadb0;Database=CarRental";
+            string connectionString = "Host=localhost;Username=postgres;Password=;Database=CarRental";
 
             // Sorgu
             string query = @"

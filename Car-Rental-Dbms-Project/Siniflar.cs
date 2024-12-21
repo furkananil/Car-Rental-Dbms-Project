@@ -43,8 +43,6 @@ namespace Car_Rental_Dbms_Project
         public Arac_Kategorileri Kategori { get; set; }
 
         // Yeni koleksiyonlar ekliyoruz
-        public ICollection<BinekArac> BinekAraclar { get; set; }  // Binek araçlar
-        public ICollection<TicariArac> TicariAraclar { get; set; }  // Ticari araçlar
     }
 
     public class TicariArac : Arac
@@ -53,7 +51,7 @@ namespace Car_Rental_Dbms_Project
         public int YukKapasitesi { get; set; }
 
         // Arac navigation property is inherited from Arac class
-        public virtual Arac Arac { get; set; }
+
     }
 
     public class BinekArac : Arac
@@ -62,7 +60,6 @@ namespace Car_Rental_Dbms_Project
         public decimal BagajHacmi { get; set; }
 
         // Arac navigation property is inherited from Arac class
-        public virtual Arac Arac { get; set; }
     }
     public class Kiralama : BaseEntity
     {
@@ -93,12 +90,58 @@ namespace Car_Rental_Dbms_Project
         // Navigation property
         public Fatura Fatura { get; set; }
     }
+    public class Sokak : BaseEntity
+    {
+        public string SokakAd { get; set; }
+
+        // Navigation property
+        public ICollection<Adres> Adresler { get; set; }
+    }
+
+    public class Sehir : BaseEntity
+    {
+        public string SehirAd { get; set; }
+
+        // Navigation property
+        public ICollection<Adres> Adresler { get; set; }
+    }
+
+    public class Ilce : BaseEntity
+    {
+        public string IlceAd { get; set; }
+
+        // Navigation property
+        public ICollection<Adres> Adresler { get; set; }
+    }
+
+    public class PostaKodu : BaseEntity
+    {
+        public string PostaKoduAd { get; set; }
+
+        // Navigation property
+        public ICollection<Adres> Adresler { get; set; }
+    }
+    public class Mahalle : BaseEntity
+    {
+        public string MahalleAd { get; set; }
+
+        // Navigation property
+        public ICollection<Adres> Adresler { get; set; }
+    }
     public class Adres : BaseEntity
     {
-        public string Sokak { get; set; }
-        public string Sehir { get; set; }
-        public string Ilce { get; set; }
-        public string PostaKodu { get; set; }
+        public int SokakId { get; set; }
+        public int SehirId { get; set; }
+        public int IlceId { get; set; }
+        public int PostaKoduId { get; set; }
+        public int MahalleId { get; set; }  // Yeni MahalleId alanı eklendi
+
+        // Navigation properties
+        public Sokak Sokak { get; set; }
+        public Sehir Sehir { get; set; }
+        public Ilce Ilce { get; set; }
+        public PostaKodu PostaKodu { get; set; }
+        public Mahalle Mahalle { get; set; }  // Yeni Mahalle ile ilişki
     }
     public class Arac_Kategorileri : BaseEntity
     {
@@ -116,7 +159,7 @@ namespace Car_Rental_Dbms_Project
     public class Arac_Istatistikleri : BaseEntity
     {
         public int AracId { get; set; }
-        public int KiralamaSayisi { get; set; }
+        public int BeygirGucu { get; set; }
         public int ToplamKilometre { get; set; }
 
         // Navigation property

@@ -9,6 +9,12 @@ namespace Car_Rental_Dbms_Project
 {
     public class ApplicationDbContext : DbContext
     {
+        public DbSet<Sokak> sokaklar { get; set; }
+        public DbSet<Sehir> sehirler { get; set; }
+        public DbSet<Ilce> ilceler { get; set; }
+        public DbSet<PostaKodu> postaKodlari { get; set; }
+        public DbSet<Mahalle> mahalleler { get; set; }  // Mahalle tablosu eklendi
+
         public DbSet<Musteri> musteriler { get; set; }
         public DbSet<Calisan> calisanlar { get; set; }
         public DbSet<Arac> araclar { get; set; }
@@ -24,7 +30,7 @@ namespace Car_Rental_Dbms_Project
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=;Database=CarRental");
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=furkanbabadb0;Database=CarRental");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -45,18 +51,42 @@ namespace Car_Rental_Dbms_Project
             modelBuilder.Entity<TicariArac>()
                 .HasBaseType<Arac>();  // TPT stratejisi için
 
-            // TicariArac ile Arac arasındaki ilişkiyi belirtme
             modelBuilder.Entity<TicariArac>()
-                .HasOne(ta => ta.Arac)  // TicariArac'ın Arac'a sahip olduğunu belirtir
-                .WithMany()  // Arac'ın birçok TicariArac'a sahip olabileceğini belirtir
-                .HasForeignKey(ta => ta.AracId)  // AracId, foreign key olarak kullanılır
-                .OnDelete(DeleteBehavior.Restrict);  // Silme işlemi kısıtlanabilir
+                 .HasOne<Arac>()  // TicariArac'ın Arac'a sahip olduğunu belirtir
+                 .WithMany()  // Arac'ın birçok TicariArac'a sahip olabileceğini belirtir
+                 .HasForeignKey(ta => ta.AracId)  // AracId, foreign key olarak kullanılır
+                 .OnDelete(DeleteBehavior.Restrict);  // Silme işlemi kısıtlanabilir
 
             modelBuilder.Entity<BinekArac>()
-                .HasOne(ba => ba.Arac)  // BinekArac ile Arac arasındaki ilişki
-                .WithMany()  // Arac ile BinekArac arasındaki ilişki
+                .HasOne<Arac>()  // BinekArac ile Arac arasındaki ilişkiyi belirtir
+                .WithMany()  // Arac'ın birçok BinekArac'a sahip olabileceğini belirtir
                 .HasForeignKey(ba => ba.AracId)  // Foreign key
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Adres>()
+            .HasOne(a => a.Sokak)
+            .WithMany(s => s.Adresler)
+            .HasForeignKey(a => a.SokakId);
+
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Sehir)
+                .WithMany(s => s.Adresler)
+                .HasForeignKey(a => a.SehirId);
+
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Ilce)
+                .WithMany(i => i.Adresler)
+                .HasForeignKey(a => a.IlceId);
+
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.PostaKodu)
+                .WithMany(p => p.Adresler)
+                .HasForeignKey(a => a.PostaKoduId);
+
+            modelBuilder.Entity<Adres>()
+                .HasOne(a => a.Mahalle)
+                .WithMany(m => m.Adresler)
+                .HasForeignKey(a => a.MahalleId);
 
             // Musteri - Adres İlişkisi
             modelBuilder.Entity<Musteri>()

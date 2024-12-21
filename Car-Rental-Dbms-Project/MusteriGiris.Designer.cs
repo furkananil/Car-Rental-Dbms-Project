@@ -30,12 +30,13 @@
         {
             SuspendLayout();
             // 
-            // Musteri
+            // MusteriGiris
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(1203, 696);
-            Name = "Musteri";
+            Name = "MusteriGiris";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Musteri";
             WindowState = FormWindowState.Maximized;

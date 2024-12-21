@@ -3,6 +3,7 @@ using System;
 using Car_Rental_Dbms_Project;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Car_Rental_Dbms_Project.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241221181638_init3")]
+    partial class init3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -558,7 +561,7 @@ namespace Car_Rental_Dbms_Project.Migrations
 
             modelBuilder.Entity("Car_Rental_Dbms_Project.BinekArac", b =>
                 {
-                    b.HasOne("Car_Rental_Dbms_Project.Arac", null)
+                    b.HasOne("Car_Rental_Dbms_Project.Arac", "Arac")
                         .WithMany()
                         .HasForeignKey("AracId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -569,11 +572,13 @@ namespace Car_Rental_Dbms_Project.Migrations
                         .HasForeignKey("Car_Rental_Dbms_Project.BinekArac", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Arac");
                 });
 
             modelBuilder.Entity("Car_Rental_Dbms_Project.TicariArac", b =>
                 {
-                    b.HasOne("Car_Rental_Dbms_Project.Arac", null)
+                    b.HasOne("Car_Rental_Dbms_Project.Arac", "Arac")
                         .WithMany()
                         .HasForeignKey("AracId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -584,6 +589,8 @@ namespace Car_Rental_Dbms_Project.Migrations
                         .HasForeignKey("Car_Rental_Dbms_Project.TicariArac", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Arac");
                 });
 
             modelBuilder.Entity("Car_Rental_Dbms_Project.Ilce", b =>

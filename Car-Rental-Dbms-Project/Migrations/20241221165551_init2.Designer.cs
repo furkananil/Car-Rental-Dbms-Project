@@ -3,6 +3,7 @@ using System;
 using Car_Rental_Dbms_Project;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Car_Rental_Dbms_Project.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241221165551_init2")]
+    partial class init2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -394,10 +397,15 @@ namespace Car_Rental_Dbms_Project.Migrations
                     b.Property<int>("AracId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("AracId1")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("BagajHacmi")
                         .HasColumnType("numeric");
 
                     b.HasIndex("AracId");
+
+                    b.HasIndex("AracId1");
 
                     b.ToTable("binek_araclar", (string)null);
                 });
@@ -409,10 +417,15 @@ namespace Car_Rental_Dbms_Project.Migrations
                     b.Property<int>("AracId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("AracId1")
+                        .HasColumnType("integer");
+
                     b.Property<int>("YukKapasitesi")
                         .HasColumnType("integer");
 
                     b.HasIndex("AracId");
+
+                    b.HasIndex("AracId1");
 
                     b.ToTable("ticari_araclar", (string)null);
                 });
@@ -558,32 +571,51 @@ namespace Car_Rental_Dbms_Project.Migrations
 
             modelBuilder.Entity("Car_Rental_Dbms_Project.BinekArac", b =>
                 {
-                    b.HasOne("Car_Rental_Dbms_Project.Arac", null)
+                    b.HasOne("Car_Rental_Dbms_Project.Arac", "Arac")
                         .WithMany()
                         .HasForeignKey("AracId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Car_Rental_Dbms_Project.Arac", null)
+                        .WithMany("BinekAraclar")
+                        .HasForeignKey("AracId1");
 
                     b.HasOne("Car_Rental_Dbms_Project.Arac", null)
                         .WithOne()
                         .HasForeignKey("Car_Rental_Dbms_Project.BinekArac", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Arac");
                 });
 
             modelBuilder.Entity("Car_Rental_Dbms_Project.TicariArac", b =>
                 {
-                    b.HasOne("Car_Rental_Dbms_Project.Arac", null)
+                    b.HasOne("Car_Rental_Dbms_Project.Arac", "Arac")
                         .WithMany()
                         .HasForeignKey("AracId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Car_Rental_Dbms_Project.Arac", null)
+                        .WithMany("TicariAraclar")
+                        .HasForeignKey("AracId1");
+
+                    b.HasOne("Car_Rental_Dbms_Project.Arac", null)
                         .WithOne()
                         .HasForeignKey("Car_Rental_Dbms_Project.TicariArac", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Arac");
+                });
+
+            modelBuilder.Entity("Car_Rental_Dbms_Project.Arac", b =>
+                {
+                    b.Navigation("BinekAraclar");
+
+                    b.Navigation("TicariAraclar");
                 });
 
             modelBuilder.Entity("Car_Rental_Dbms_Project.Ilce", b =>

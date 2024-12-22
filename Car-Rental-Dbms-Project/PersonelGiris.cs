@@ -62,25 +62,31 @@ namespace Car_Rental_Dbms_Project
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 string query = @"
-                    SELECT 
-                        m.""Id"" AS musteri_id, 
-                        m.""Ad"", 
-                        m.""Soyad"", 
-                        m.""Email"", 
-                        m.""Telefon"",
-                        se.""SehirAd"" AS sehir,
-                        il.""IlceAd"" AS ilce,
-                        ma.""MahalleAd"" AS mahalle,
-                        so.""SokakAd"" AS sokak,
-                        pk.""PostaKoduAd"" AS postakodu
-                    FROM ""musteriler"" m
-                    JOIN ""adresler"" a ON m.""AdresId"" = a.""Id""
-                    JOIN ""sehirler"" se ON a.""SehirId"" = se.""Id""
-                    JOIN ""ilceler"" il ON a.""IlceId"" = il.""Id""
-                    JOIN ""mahalleler"" ma ON a.""MahalleId"" = ma.""Id""
-                    JOIN ""sokaklar"" so ON a.""SokakId"" = so.""Id""
-                    JOIN ""postaKodlari"" pk ON a.""PostaKoduId"" = pk.""Id"";
-                ";
+    SELECT 
+        m.""Id"" AS musteri_id, 
+        m.""Ad"", 
+        m.""Soyad"", 
+        m.""Email"", 
+        m.""Telefon"",
+        se.""SehirAd"" AS sehir,
+        il.""IlceAd"" AS ilce,
+        ma.""MahalleAd"" AS mahalle,
+        so.""SokakAd"" AS sokak,
+        pk.""PostaKoduAd"" AS postakodu,
+        k.""KiralamaTarihi"",
+        k.""KiralamaBitisTarihi"",
+        f.""Tutar"" AS toplam_tutar
+    FROM ""musteriler"" m
+    JOIN ""adresler"" a ON m.""AdresId"" = a.""Id""
+    JOIN ""sehirler"" se ON a.""SehirId"" = se.""Id""
+    JOIN ""ilceler"" il ON a.""IlceId"" = il.""Id""
+    JOIN ""mahalleler"" ma ON a.""MahalleId"" = ma.""Id""
+    JOIN ""sokaklar"" so ON a.""SokakId"" = so.""Id""
+    JOIN ""postaKodlari"" pk ON a.""PostaKoduId"" = pk.""Id""
+    LEFT JOIN ""kiralamalar"" k ON m.""Id"" = k.""MusteriId""
+    LEFT JOIN ""faturalar"" f ON k.""Id"" = f.""KiralamaId"";
+";
+
 
                 NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(query, connection);
                 DataTable dataTable = new DataTable();
@@ -378,6 +384,205 @@ namespace Car_Rental_Dbms_Project
             else
             {
                 MessageBox.Show("Lütfen silmek istediğiniz personeli seçin.");
+            }
+        }
+
+
+
+        private void btnDeleteM_Click(object sender, EventArgs e)
+        {
+            if (dataGridView2.SelectedRows.Count > 0)
+            {
+                int musteriId = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["musteri_id"].Value);
+
+                using (var connection = new NpgsqlConnection("Host=localhost;Username=postgres;Password=furkanbabadb0;Database=CarRental"))
+                {
+                    connection.Open();
+
+                    // Kiralamalar tablosundaki ilgili kayıtları silme
+                    var deleteKiralamalarCommand = new NpgsqlCommand(@"DELETE FROM ""kiralamalar"" WHERE ""MusteriId"" = @MusteriId", connection);
+                    deleteKiralamalarCommand.Parameters.AddWithValue("@MusteriId", musteriId);
+                    deleteKiralamalarCommand.ExecuteNonQuery();
+
+                    // Musteriler tablosundan silme
+                    var deleteMusteriCommand = new NpgsqlCommand(@"DELETE FROM ""musteriler"" WHERE ""Id"" = @Id", connection);
+                    deleteMusteriCommand.Parameters.AddWithValue("@Id", musteriId);
+                    deleteMusteriCommand.ExecuteNonQuery();
+
+                    // Adresler tablosundan silme
+                    var deleteAdresCommand = new NpgsqlCommand(@"
+                DELETE FROM ""adresler""
+                WHERE ""Id"" = (SELECT ""AdresId"" FROM ""musteriler"" WHERE ""Id"" = @Id)", connection);
+                    deleteAdresCommand.Parameters.AddWithValue("@Id", musteriId);
+                    deleteAdresCommand.ExecuteNonQuery();
+
+                    MessageBox.Show("Müşteri başarıyla silindi.");
+
+                    // DataGridView'i güncelle
+                    VerileriYenileMusteri();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Lütfen silmek istediğiniz müşteriyi seçin.");
+            }
+        }
+
+        private void VerileriYenileMusteri()
+        {
+            string query = @"
+    SELECT 
+        m.""Id"" AS musteri_id, 
+        m.""Ad"", 
+        m.""Soyad"", 
+        m.""Email"", 
+        m.""Telefon"",
+        se.""SehirAd"" AS sehir,
+        il.""IlceAd"" AS ilce,
+        ma.""MahalleAd"" AS mahalle,
+        so.""SokakAd"" AS sokak,
+        pk.""PostaKoduAd"" AS postakodu,
+        k.""KiralamaTarihi"",
+        k.""KiralamaBitisTarihi"",
+        f.""Tutar"" AS toplam_tutar
+    FROM ""musteriler"" m
+    JOIN ""adresler"" a ON m.""AdresId"" = a.""Id""
+    JOIN ""sehirler"" se ON a.""SehirId"" = se.""Id""
+    JOIN ""ilceler"" il ON a.""IlceId"" = il.""Id""
+    JOIN ""mahalleler"" ma ON a.""MahalleId"" = ma.""Id""
+    JOIN ""sokaklar"" so ON a.""SokakId"" = so.""Id""
+    JOIN ""postaKodlari"" pk ON a.""PostaKoduId"" = pk.""Id""
+    LEFT JOIN ""kiralamalar"" k ON m.""Id"" = k.""MusteriId""
+    LEFT JOIN ""faturalar"" f ON k.""Id"" = f.""KiralamaId"";
+";
+
+            using (NpgsqlConnection connection = new NpgsqlConnection("Host=localhost;Username=postgres;Password=furkanbabadb0;Database=CarRental"))
+            {
+                connection.Open();
+
+                NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, connection);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                dataGridView2.DataSource = dt;
+                dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
+        }
+
+        
+        private void btnUpdateM_Click(object sender, EventArgs e)
+        {
+            if (dataGridView2.SelectedRows.Count > 0)
+            {
+                var selectedRow = dataGridView2.SelectedRows[0];
+                int musteriId = Convert.ToInt32(selectedRow.Cells["musteri_id"].Value);
+                string ad = selectedRow.Cells["Ad"].Value.ToString();
+                string soyad = selectedRow.Cells["Soyad"].Value.ToString();
+                string email = selectedRow.Cells["Email"].Value.ToString();
+                string telefon = selectedRow.Cells["Telefon"].Value.ToString();
+                string sehir = selectedRow.Cells["sehir"].Value.ToString();
+                string ilce = selectedRow.Cells["ilce"].Value.ToString();
+                string mahalle = selectedRow.Cells["mahalle"].Value.ToString();
+                string sokak = selectedRow.Cells["sokak"].Value.ToString();
+                string postaKodu = selectedRow.Cells["postakodu"].Value.ToString();
+
+                using (var connection = new NpgsqlConnection("Host=localhost;Username=postgres;Password=furkanbabadb0;Database=CarRental"))
+                {
+                    connection.Open();
+
+                    // Sehir ID'sini kontrol et ve ekle
+                    var checkSehirCommand = new NpgsqlCommand(@"SELECT ""Id"" FROM ""sehirler"" WHERE ""SehirAd"" = @Sehir", connection);
+                    checkSehirCommand.Parameters.AddWithValue("@Sehir", sehir);
+                    var sehirId = checkSehirCommand.ExecuteScalar();
+                    if (sehirId == null)
+                    {
+                        var insertSehirCommand = new NpgsqlCommand(@"INSERT INTO ""sehirler"" (""SehirAd"") VALUES (@Sehir) RETURNING ""Id""", connection);
+                        insertSehirCommand.Parameters.AddWithValue("@Sehir", sehir);
+                        sehirId = insertSehirCommand.ExecuteScalar();
+                    }
+
+                    // Ilce ID'sini kontrol et ve ekle
+                    var checkIlceCommand = new NpgsqlCommand(@"SELECT ""Id"" FROM ""ilceler"" WHERE ""IlceAd"" = @Ilce", connection);
+                    checkIlceCommand.Parameters.AddWithValue("@Ilce", ilce);
+                    var ilceId = checkIlceCommand.ExecuteScalar();
+                    if (ilceId == null)
+                    {
+                        var insertIlceCommand = new NpgsqlCommand(@"INSERT INTO ""ilceler"" (""IlceAd"") VALUES (@Ilce) RETURNING ""Id""", connection);
+                        insertIlceCommand.Parameters.AddWithValue("@Ilce", ilce);
+                        ilceId = insertIlceCommand.ExecuteScalar();
+                    }
+
+                    // Mahalle ID'sini kontrol et ve ekle
+                    var checkMahalleCommand = new NpgsqlCommand(@"SELECT ""Id"" FROM ""mahalleler"" WHERE ""MahalleAd"" = @Mahalle", connection);
+                    checkMahalleCommand.Parameters.AddWithValue("@Mahalle", mahalle);
+                    var mahalleId = checkMahalleCommand.ExecuteScalar();
+                    if (mahalleId == null)
+                    {
+                        var insertMahalleCommand = new NpgsqlCommand(@"INSERT INTO ""mahalleler"" (""MahalleAd"") VALUES (@Mahalle) RETURNING ""Id""", connection);
+                        insertMahalleCommand.Parameters.AddWithValue("@Mahalle", mahalle);
+                        mahalleId = insertMahalleCommand.ExecuteScalar();
+                    }
+
+                    // Sokak ID'sini kontrol et ve ekle
+                    var checkSokakCommand = new NpgsqlCommand(@"SELECT ""Id"" FROM ""sokaklar"" WHERE ""SokakAd"" = @Sokak", connection);
+                    checkSokakCommand.Parameters.AddWithValue("@Sokak", sokak);
+                    var sokakId = checkSokakCommand.ExecuteScalar();
+                    if (sokakId == null)
+                    {
+                        var insertSokakCommand = new NpgsqlCommand(@"INSERT INTO ""sokaklar"" (""SokakAd"") VALUES (@Sokak) RETURNING ""Id""", connection);
+                        insertSokakCommand.Parameters.AddWithValue("@Sokak", sokak);
+                        sokakId = insertSokakCommand.ExecuteScalar();
+                    }
+
+                    // Posta Kodu ID'sini kontrol et ve ekle
+                    var checkPostaKoduCommand = new NpgsqlCommand(@"SELECT ""Id"" FROM ""postaKodlari"" WHERE ""PostaKoduAd"" = @PostaKodu", connection);
+                    checkPostaKoduCommand.Parameters.AddWithValue("@PostaKodu", postaKodu);
+                    var postaKoduId = checkPostaKoduCommand.ExecuteScalar();
+                    if (postaKoduId == null)
+                    {
+                        var insertPostaKoduCommand = new NpgsqlCommand(@"INSERT INTO ""postaKodlari"" (""PostaKoduAd"") VALUES (@PostaKodu) RETURNING ""Id""", connection);
+                        insertPostaKoduCommand.Parameters.AddWithValue("@PostaKodu", postaKodu);
+                        postaKoduId = insertPostaKoduCommand.ExecuteScalar();
+                    }
+
+                    // Adresler tablosunu güncelleme
+                    var updateAdresCommand = new NpgsqlCommand(@"
+                UPDATE ""adresler""
+                SET ""SehirId"" = @SehirId,
+                    ""IlceId"" = @IlceId,
+                    ""MahalleId"" = @MahalleId,
+                    ""SokakId"" = @SokakId,
+                    ""PostaKoduId"" = @PostaKoduId
+                WHERE ""Id"" = (SELECT ""AdresId"" FROM ""musteriler"" WHERE ""Id"" = @MusteriId)", connection);
+                    updateAdresCommand.Parameters.AddWithValue("@SehirId", sehirId);
+                    updateAdresCommand.Parameters.AddWithValue("@IlceId", ilceId);
+                    updateAdresCommand.Parameters.AddWithValue("@MahalleId", mahalleId);
+                    updateAdresCommand.Parameters.AddWithValue("@SokakId", sokakId);
+                    updateAdresCommand.Parameters.AddWithValue("@PostaKoduId", postaKoduId);
+                    updateAdresCommand.Parameters.AddWithValue("@MusteriId", musteriId);
+                    updateAdresCommand.ExecuteNonQuery();
+
+                    // Musteriler tablosunu güncelleme
+                    var updateMusteriCommand = new NpgsqlCommand(@"
+                UPDATE ""musteriler""
+                SET ""Ad"" = @Ad, ""Soyad"" = @Soyad, ""Email"" = @Email, ""Telefon"" = @Telefon
+                WHERE ""Id"" = @Id", connection);
+                    updateMusteriCommand.Parameters.AddWithValue("@Id", musteriId);
+                    updateMusteriCommand.Parameters.AddWithValue("@Ad", ad);
+                    updateMusteriCommand.Parameters.AddWithValue("@Soyad", soyad);
+                    updateMusteriCommand.Parameters.AddWithValue("@Email", email);
+                    updateMusteriCommand.Parameters.AddWithValue("@Telefon", telefon);
+                    updateMusteriCommand.ExecuteNonQuery();
+
+                    MessageBox.Show("Müşteri başarıyla güncellendi.");
+
+                    // DataGridView'i güncelle
+                    VerileriYenileMusteri();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Lütfen güncellemek istediğiniz müşteriyi seçin.");
             }
         }
 

@@ -54,6 +54,9 @@
             txtIlce = new TextBox();
             btnUpdate = new Button();
             btnDelete = new Button();
+            btnDeleteM = new Button();
+            btnUpdateM = new Button();
+            label13 = new Label();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
@@ -255,20 +258,21 @@
             // 
             // btnEkle
             // 
+            btnEkle.BackColor = Color.PaleGreen;
             btnEkle.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 162);
-            btnEkle.Location = new Point(870, 373);
+            btnEkle.Location = new Point(870, 467);
             btnEkle.Name = "btnEkle";
             btnEkle.Size = new Size(209, 106);
             btnEkle.TabIndex = 22;
             btnEkle.Text = "Personel Ekle";
-            btnEkle.UseVisualStyleBackColor = true;
+            btnEkle.UseVisualStyleBackColor = false;
             btnEkle.Click += btnEkle_Click;
             // 
             // label12
             // 
             label12.AutoSize = true;
             label12.Font = new Font("Arial Rounded MT Bold", 22.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
-            label12.Location = new Point(782, 55);
+            label12.Location = new Point(782, 44);
             label12.Name = "label12";
             label12.Size = new Size(387, 43);
             label12.TabIndex = 23;
@@ -284,25 +288,61 @@
             // 
             // btnUpdate
             // 
+            btnUpdate.BackColor = SystemColors.Info;
             btnUpdate.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 162);
-            btnUpdate.Location = new Point(870, 246);
+            btnUpdate.Location = new Point(870, 288);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Size = new Size(209, 106);
             btnUpdate.TabIndex = 25;
             btnUpdate.Text = "Personel Güncelle";
-            btnUpdate.UseVisualStyleBackColor = true;
+            btnUpdate.UseVisualStyleBackColor = false;
             btnUpdate.Click += btnUpdate_Click;
             // 
             // btnDelete
             // 
+            btnDelete.BackColor = Color.RosyBrown;
             btnDelete.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 162);
             btnDelete.Location = new Point(870, 115);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(209, 106);
             btnDelete.TabIndex = 26;
             btnDelete.Text = "Personel Sil";
-            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.UseVisualStyleBackColor = false;
             btnDelete.Click += btnDelete_Click;
+            // 
+            // btnDeleteM
+            // 
+            btnDeleteM.BackColor = Color.RosyBrown;
+            btnDeleteM.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 162);
+            btnDeleteM.Location = new Point(1642, 682);
+            btnDeleteM.Name = "btnDeleteM";
+            btnDeleteM.Size = new Size(209, 106);
+            btnDeleteM.TabIndex = 29;
+            btnDeleteM.Text = "Müşteri Sil";
+            btnDeleteM.UseVisualStyleBackColor = false;
+            btnDeleteM.Click += btnDeleteM_Click;
+            // 
+            // btnUpdateM
+            // 
+            btnUpdateM.BackColor = SystemColors.Info;
+            btnUpdateM.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 162);
+            btnUpdateM.Location = new Point(1642, 852);
+            btnUpdateM.Name = "btnUpdateM";
+            btnUpdateM.Size = new Size(209, 106);
+            btnUpdateM.TabIndex = 28;
+            btnUpdateM.Text = "Müşteri Güncelle";
+            btnUpdateM.UseVisualStyleBackColor = false;
+            btnUpdateM.Click += btnUpdateM_Click;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Font = new Font("Arial Rounded MT Bold", 22.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
+            label13.Location = new Point(1551, 598);
+            label13.Name = "label13";
+            label13.Size = new Size(361, 43);
+            label13.TabIndex = 27;
+            label13.Text = "Müşteri işlemlerleri";
             // 
             // yonetici
             // 
@@ -310,6 +350,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(1924, 1027);
+            Controls.Add(btnDeleteM);
+            Controls.Add(btnUpdateM);
+            Controls.Add(label13);
             Controls.Add(btnDelete);
             Controls.Add(btnUpdate);
             Controls.Add(txtIlce);
@@ -374,5 +417,8 @@
         private TextBox txtIlce;
         private Button btnUpdate;
         private Button btnDelete;
+        private Button btnDeleteM;
+        private Button btnUpdateM;
+        private Label label13;
     }
 }

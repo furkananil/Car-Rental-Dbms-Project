@@ -30,12 +30,13 @@
         {
             SuspendLayout();
             // 
-            // Personel
+            // PersonelGiris
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(800, 450);
-            Name = "Personel";
+            Name = "PersonelGiris";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Personel";
             ResumeLayout(false);

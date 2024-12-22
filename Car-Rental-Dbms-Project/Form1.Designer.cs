@@ -76,11 +76,11 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 162);
-            label2.Location = new Point(94, 365);
+            label2.Location = new Point(69, 365);
             label2.Name = "label2";
-            label2.Size = new Size(135, 46);
+            label2.Size = new Size(206, 46);
             label2.TabIndex = 4;
-            label2.Text = "Müşteri";
+            label2.Text = "Müşteri ekle";
             // 
             // label3
             // 
@@ -88,9 +88,9 @@
             label3.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 162);
             label3.Location = new Point(480, 365);
             label3.Name = "label3";
-            label3.Size = new Size(150, 46);
+            label3.Size = new Size(143, 46);
             label3.TabIndex = 5;
-            label3.Text = "Personel";
+            label3.Text = "Yönetici";
             // 
             // Form1
             // 

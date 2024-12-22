@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -16,34 +17,33 @@ namespace Car_Rental_Dbms_Project
 
         private void LoadCarsWithDetails()
         {
-            string connectionString = "Host=localhost;Username=postgres;Password=;Database=CarRental";
+            string connectionString = "Host=localhost;Username=postgres;Password=furkanbabadb0;Database=CarRental";
 
-            // Sorgu
             string query = @"
-        SELECT 
-            a.""Id"" AS ""AracId"",
-            a.""Marka"",
-            a.""Model"",
-            a.""Yil"",
-            k.""KategoriAd"" AS ""Kategori"",
-            COALESCE(b.""BagajHacmi"", 0) AS ""BagajHacmi"", 
-            COALESCE(t.""YukKapasitesi"", 0) AS ""YukKapasitesi"",
-            i.""BeygirGucu"", 
-            i.""ToplamKilometre"", 
-            t2.""YakitTuru"", 
-            t2.""YakitTuketimi""
-        FROM 
-            araclar a
-        LEFT JOIN 
-            binek_araclar b ON a.""Id"" = b.""AracId""
-        LEFT JOIN 
-            ticari_araclar t ON a.""Id"" = t.""AracId""
-        LEFT JOIN 
-            arac_istatistikleri i ON a.""Id"" = i.""AracId""
-        LEFT JOIN 
-            arac_tuketim_bilgileri t2 ON a.""Id"" = t2.""AracId""
-        LEFT JOIN 
-            arac_kategorileri k ON a.""KategoriId"" = k.""Id"";";
+    SELECT 
+        a.""Id"" AS ""AracId"",
+        a.""Marka"",
+        a.""Model"",
+        a.""Yil"",
+        k.""KategoriAd"" AS ""Kategori"",
+        COALESCE(b.""BagajHacmi"", NULL) AS ""BagajHacmi"", 
+        COALESCE(t.""YukKapasitesi"", NULL) AS ""YukKapasitesi"",
+        i.""BeygirGucu"", 
+        i.""ToplamKilometre"", 
+        t2.""YakitTuru"", 
+        t2.""YakitTuketimi""
+    FROM 
+        araclar a
+    LEFT JOIN 
+        binek_araclar b ON a.""Id"" = b.""AracId""
+    LEFT JOIN 
+        ticari_araclar t ON a.""Id"" = t.""AracId""
+    LEFT JOIN 
+        arac_istatistikleri i ON a.""Id"" = i.""AracId""
+    LEFT JOIN 
+        arac_tuketim_bilgileri t2 ON a.""Id"" = t2.""AracId""
+    LEFT JOIN 
+        arac_kategorileri k ON a.""KategoriId"" = k.""Id"";";
 
             using (var connection = new NpgsqlConnection(connectionString))
             {
@@ -52,11 +52,13 @@ namespace Car_Rental_Dbms_Project
                 using (var command = new NpgsqlCommand(query, connection))
                 using (var reader = command.ExecuteReader())
                 {
-                    int xOffset = 10; // X konumu için başlangıç değeri
-                    int yOffset = 10; // Y konumu için başlangıç değeri
-                    int panelWidth = 250; // Panel genişliği
-                    int panelHeight = 340; // Panel yüksekliği
-                    int maxColumns = 4; // Her satırda maksimum panel sayısı
+                    int panelWidth = 270;
+                    int panelHeight = 340;
+                    int maxColumns = 3; // Her satırda maksimum panel sayısı
+                    int xOffset = (this.ClientSize.Width - ((panelWidth + 10) * maxColumns)) / 2; // Ortalamak için
+                    int yOffset = 10;
+
+                    int columnCount = 0; // Mevcut sütun sayısı
 
                     while (reader.Read())
                     {
@@ -73,8 +75,13 @@ namespace Car_Rental_Dbms_Project
                         string yakitTuru = reader["YakitTuru"]?.ToString() ?? "N/A";
                         string yakitTuketimi = reader["YakitTuketimi"]?.ToString() ?? "N/A";
 
+                        // Araç türünü belirle
+                        string aracTuru = string.IsNullOrEmpty(bagajHacmi) && !string.IsNullOrEmpty(yukKapasitesi)
+                            ? "Ticari"
+                            : "Binek";
+
                         // Resim yolu (tam yol)
-                        string imagePath = $@"C:\Users\LENOVO\source\repos\deneme123\Car-Rental-Dbms-Project\Car-Rental-Dbms-Project\Resources\{aracId}.jpg";
+                        string imagePath = $"C:\\Users\\LENOVO\\source\\repos\\deneme123\\Car-Rental-Dbms-Project\\Car-Rental-Dbms-Project\\Resources\\{aracId}.jpg";
 
                         // Resmi yükle, yoksa varsayılan bir resim kullan
                         Image aracResmi = File.Exists(imagePath) ? Image.FromFile(imagePath) : null;
@@ -83,7 +90,7 @@ namespace Car_Rental_Dbms_Project
                         Panel panel = new Panel
                         {
                             Size = new Size(panelWidth, panelHeight),
-                            Location = new Point(xOffset, yOffset),
+                            Location = new Point(xOffset + 550, yOffset),
                             BorderStyle = BorderStyle.FixedSingle
                         };
 
@@ -92,23 +99,9 @@ namespace Car_Rental_Dbms_Project
                         {
                             Image = aracResmi,
                             SizeMode = PictureBoxSizeMode.StretchImage,
-                            Size = new Size(panelWidth, 150), // Resmin boyutu
+                            Size = new Size(panelWidth, 150),
                             Location = new Point(0, 0)
                         };
-
-                        // Araç türünü doğru şekilde belirleyin
-                        string aracTuru = "Binek"; // Varsayılan olarak Binek
-
-                        // Eğer Bagaj Hacmi varsa, Binek Araç olarak kabul et
-                        if (!string.IsNullOrEmpty(bagajHacmi))
-                        {
-                            aracTuru = "Binek";
-                        }
-                        // Eğer Bagaj Hacmi yoksa ama Yük Kapasitesi varsa, Ticari Araç olarak kabul et
-                        else if (!string.IsNullOrEmpty(yukKapasitesi))
-                        {
-                            aracTuru = "Ticari";
-                        }
 
                         // Araç bilgilerini içeren Label
                         Label infoLabel = new Label
@@ -128,16 +121,253 @@ namespace Car_Rental_Dbms_Project
 
                         this.Controls.Add(panel);
 
-                        // Yatayda dizilim
-                        xOffset += panel.Width + 10; // Sonraki panel için X konumu
+                        // Sütun sayısını artır
+                        columnCount++;
+                        xOffset += panel.Width + 10;
 
                         // Eğer satır dolduysa, bir sonraki satıra geç
-                        if (xOffset > this.ClientSize.Width - panelWidth)
+                        if (columnCount >= maxColumns)
                         {
-                            xOffset = 10; // X konumunu sıfırla
-                            yOffset += panelHeight + 10; // Y konumunu artır
+                            columnCount = 0; // Sütun sayısını sıfırla
+                            xOffset = (this.ClientSize.Width - ((panelWidth + 10) * maxColumns)) / 2; // X konumunu sıfırla
+                            yOffset += panelHeight + 150; // Y konumunu artır (400px boşluk)
                         }
                     }
+                }
+            }
+        }
+
+        private void MusteriGiris_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnKiralama_Click(object sender, EventArgs e)
+        {
+            string connectionString = "Host=localhost;Username=postgres;Password=furkanbabadb0;Database=CarRental";
+
+            using (var context = new ApplicationDbContext())
+            {
+                // TextBox'lardan alınan veriler
+                string sokakAd = txtSokak.Text;
+                string mahalleAd = txtMahalle.Text;
+                string sehirAd = txtSehir.Text;
+                string ilceAd = txtIlce.Text;
+                string postaKoduAd = txtPostaKodu.Text;
+
+                // 1. Sokak nesnesini oluştur ve kaydet
+                var sokak = new Sokak
+                {
+                    SokakAd = sokakAd // TextBox'tan gelen sokak adı
+                };
+
+                context.sokaklar.Add(sokak);
+                context.SaveChanges(); // Sokak'ı kaydediyoruz, böylece ID'si oluşturulmuş oluyor
+
+                // 2. Mahalle nesnesini oluştur ve kaydet
+                var mahalle = new Mahalle
+                {
+                    MahalleAd = mahalleAd // TextBox'tan gelen mahalle adı
+                };
+
+                context.mahalleler.Add(mahalle);
+                context.SaveChanges(); // Mahalle'yi kaydediyoruz, böylece ID'si oluşturulmuş oluyor
+
+                // 3. Sehir nesnesini oluştur ve kaydet (Eğer Sehir yoksa)
+                var sehir = new Sehir
+                {
+                    SehirAd = sehirAd // TextBox'tan gelen şehir adı
+                };
+
+                context.sehirler.Add(sehir);
+                context.SaveChanges(); // Şehri kaydediyoruz
+
+                // 4. Ilce nesnesini oluştur ve kaydet (Eğer Ilce yoksa)
+                var ilce = new Ilce
+                {
+                    IlceAd = ilceAd // TextBox'tan gelen ilçe adı
+                };
+
+                context.ilceler.Add(ilce);
+                context.SaveChanges(); // İlçe'yi kaydediyoruz
+
+                // 5. PostaKodu nesnesini oluştur ve kaydet (Eğer Posta Kodu yoksa)
+                var postaKodu = new PostaKodu
+                {
+                    PostaKoduAd = postaKoduAd // TextBox'tan gelen posta kodu
+                };
+
+                context.postaKodlari.Add(postaKodu);
+                context.SaveChanges(); // Posta Kodu'nu kaydediyoruz
+
+                // 6. Adres nesnesini oluştur ve kaydet
+                var adres = new Adres
+                {
+                    SokakId = sokak.Id, // Kaydedilen Sokak'ın ID'si
+                    SehirId = sehir.Id, // Kaydedilen Sehir'in ID'si
+                    IlceId = ilce.Id, // Kaydedilen Ilce'nin ID'si
+                    PostaKoduId = postaKodu.Id, // Kaydedilen PostaKodu'nun ID'si
+                    MahalleId = mahalle.Id // Kaydedilen Mahalle'nin ID'si
+                };
+
+                context.adresler.Add(adres);
+                context.SaveChanges(); // Adres'i kaydediyoruz
+
+                // Yeni eklenen adresin ID'sini al
+                int adresId = adres.Id;
+
+                // Müşteri ekleme işlemi
+                var musteri = new Musteri
+                {
+                    Ad = txtAd.Text,
+                    Soyad = txtSoyad.Text,
+                    Email = txtEmail.Text,
+                    Telefon = txtTelefon.Text,
+                    AdresId = adresId // Adresin ID'si burada kullanılıyor
+                };
+
+                context.musteriler.Add(musteri);
+                context.SaveChanges();
+
+                // Seçilen RadioButton'dan aracın ID'sini al
+                int aracId = 0;
+                int gunlukFiyat = 0;
+
+                if (radioButton1.Checked)
+                {
+                    aracId = 1;
+                    gunlukFiyat = 2149; // 1. aracın günlük fiyatı
+                }
+                else if (radioButton2.Checked)
+                {
+                    aracId = 2;
+                    gunlukFiyat = 849; // 2. aracın günlük fiyatı
+                }
+                else if (radioButton3.Checked)
+                {
+                    aracId = 3;
+                    gunlukFiyat = 749; // 3. aracın günlük fiyatı
+                }
+                else if (radioButton4.Checked)
+                {
+                    aracId = 4;
+                    gunlukFiyat = 1699; // 4. aracın günlük fiyatı
+                }
+                else if (radioButton5.Checked)
+                {
+                    aracId = 5;
+                    gunlukFiyat = 899; // 5. aracın günlük fiyatı
+                }
+                else if (radioButton6.Checked)
+                {
+                    aracId = 6;
+                    gunlukFiyat = 1299; // 6. aracın günlük fiyatı
+                }
+
+                if (aracId == 0)
+                {
+                    MessageBox.Show("Lütfen bir araç seçin.");
+                    return;
+                }
+
+                // DateTimePicker ile alınan tarihi UTC'ye dönüştürme
+                DateTime kiralamaTarihi = dateTimePickerKiralamaTarihi.Value;
+                DateTime kiralamaBitisTarihi = dateTimePickerKiralamaBitisTarihi.Value;
+
+                // Eğer tarih yerel zaman (Local) ise UTC'ye dönüştür
+                if (kiralamaTarihi.Kind == DateTimeKind.Local)
+                {
+                    kiralamaTarihi = kiralamaTarihi.ToUniversalTime();
+                }
+                else if (kiralamaTarihi.Kind == DateTimeKind.Unspecified)
+                {
+                    // Zaman dilimi belirtilmemişse, UTC'ye çevirelim
+                    kiralamaTarihi = DateTime.SpecifyKind(kiralamaTarihi, DateTimeKind.Utc);
+                }
+
+                if (kiralamaBitisTarihi.Kind == DateTimeKind.Local)
+                {
+                    kiralamaBitisTarihi = kiralamaBitisTarihi.ToUniversalTime();
+                }
+                else if (kiralamaBitisTarihi.Kind == DateTimeKind.Unspecified)
+                {
+                    // Zaman dilimi belirtilmemişse, UTC'ye çevirelim
+                    kiralamaBitisTarihi = DateTime.SpecifyKind(kiralamaBitisTarihi, DateTimeKind.Utc);
+                }
+
+
+                var kiralamaSuresi = (kiralamaBitisTarihi - kiralamaTarihi).Days;
+
+                if (kiralamaSuresi <= 0)
+                {
+                    MessageBox.Show("Kiralama bitiş tarihi, başlangıç tarihinden sonraki bir tarih olmalıdır.");
+                    return;
+                }
+
+                int toplamTutar = gunlukFiyat * kiralamaSuresi; // Toplam tutar hesaplama
+
+                // Kiralama bilgilerini kaydet
+                var kiralama = new Kiralama
+                {
+                    MusteriId = musteri.Id,
+                    KiralamaTarihi = kiralamaTarihi,
+                    KiralamaBitisTarihi = kiralamaBitisTarihi,
+                    AracId = aracId // Seçilen aracın ID'si burada kullanılıyor
+                };
+
+                context.kiralamalar.Add(kiralama);
+                context.SaveChanges();
+
+                // Fatura bilgilerini oluştur
+                var fatura = new Fatura
+                {
+                    KiralamaId = kiralama.Id,
+                    FaturaTarihi = DateTime.UtcNow,
+                    Tutar = toplamTutar
+                };
+
+                context.faturalar.Add(fatura);
+                context.SaveChanges();
+
+                // Ödeme bilgilerini oluştur
+                var odeme = new Odeme
+                {
+                    FaturaId = fatura.Id,
+                    OdemeTarihi = DateTime.UtcNow,
+                    OdemeTutar = toplamTutar, // Ödeme tutarı, toplam tutar ile aynı olacak
+                };
+
+                context.odemeler.Add(odeme);
+                context.SaveChanges();
+
+                // Ekranda mesaj göster
+                MessageBox.Show("Müşteri, kiralama, fatura ve ödeme başarıyla eklendi!");
+
+                // Kiralama bilgileri ve ilişkili fatura/ödeme bilgilerini ekrana getir
+                var kiralamaBilgileri = from k in context.kiralamalar
+                                        join f in context.faturalar on k.Id equals f.KiralamaId
+                                        join o in context.odemeler on f.Id equals o.FaturaId
+                                        where k.MusteriId == musteri.Id
+                                        select new
+                                        {
+                                            k.KiralamaTarihi,
+                                            k.KiralamaBitisTarihi,
+                                            f.FaturaTarihi,
+                                            f.Tutar,
+                                            o.OdemeTarihi,
+                                            o.OdemeTutar,
+                                        };
+
+                // Kiralama bilgilerini ekrana yazdır
+                foreach (var bilgi in kiralamaBilgileri)
+                {
+                    // Burada bilgileri ekranda göstermek için MessageBox veya DataGrid gibi bir yapı kullanabilirsiniz
+                    MessageBox.Show($"Kiralama Tarihi: {bilgi.KiralamaTarihi}\n" +
+                                    $"Kiralama Bitiş Tarihi: {bilgi.KiralamaBitisTarihi}\n" +
+                                    $"Fatura Tarihi: {bilgi.FaturaTarihi}\n" +
+                                    $"Toplam Tutar: {bilgi.Tutar}\n" +
+                                    $"Ödeme Tarihi: {bilgi.OdemeTarihi}\n" +
+                                    $"Ödeme Tutarı: {bilgi.OdemeTutar}\n");
                 }
             }
         }

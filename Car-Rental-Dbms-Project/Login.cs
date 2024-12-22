@@ -26,7 +26,7 @@ namespace Car_Rental_Dbms_Project
             if (kullaniciAdi == "admin" && sifre == "123")
             {
                 // Giriş başarılı, PersonelForm'u aç
-                PersonelGiris personelForm = new PersonelGiris();
+                yonetici personelForm = new yonetici();
                 personelForm.Show();
                 this.Hide(); // Giriş formunu gizle
             }

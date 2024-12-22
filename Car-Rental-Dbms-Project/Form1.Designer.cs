@@ -76,11 +76,11 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 162);
-            label2.Location = new Point(69, 365);
+            label2.Location = new Point(99, 365);
             label2.Name = "label2";
-            label2.Size = new Size(206, 46);
+            label2.Size = new Size(135, 46);
             label2.TabIndex = 4;
-            label2.Text = "Müşteri ekle";
+            label2.Text = "Müşteri";
             // 
             // label3
             // 

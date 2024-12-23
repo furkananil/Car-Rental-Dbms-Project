@@ -57,6 +57,7 @@
             btnDeleteM = new Button();
             btnUpdateM = new Button();
             label13 = new Label();
+            btnToplamCiro = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
@@ -344,12 +345,25 @@
             label13.TabIndex = 27;
             label13.Text = "Müşteri işlemlerleri";
             // 
+            // btnToplamCiro
+            // 
+            btnToplamCiro.BackColor = Color.LimeGreen;
+            btnToplamCiro.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 162);
+            btnToplamCiro.Location = new Point(1117, 598);
+            btnToplamCiro.Name = "btnToplamCiro";
+            btnToplamCiro.Size = new Size(209, 106);
+            btnToplamCiro.TabIndex = 30;
+            btnToplamCiro.Text = "Toplam Ciro Hesapla";
+            btnToplamCiro.UseVisualStyleBackColor = false;
+            btnToplamCiro.Click += btnToplamCiro_Click;
+            // 
             // yonetici
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(1924, 1027);
+            Controls.Add(btnToplamCiro);
             Controls.Add(btnDeleteM);
             Controls.Add(btnUpdateM);
             Controls.Add(label13);
@@ -383,6 +397,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Yonetici";
             WindowState = FormWindowState.Maximized;
+            Load += yonetici_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
@@ -420,5 +435,6 @@
         private Button btnDeleteM;
         private Button btnUpdateM;
         private Label label13;
+        private Button btnToplamCiro;
     }
 }

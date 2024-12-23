@@ -58,13 +58,14 @@
             txtPostaKodu = new TextBox();
             dateTimePickerKiralamaTarihi = new DateTimePicker();
             dateTimePickerKiralamaBitisTarihi = new DateTimePicker();
+            yoneticiBtn = new Button();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 48F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 162);
-            label1.Location = new Point(109, 24);
+            label1.Location = new Point(30, 24);
             label1.Name = "label1";
             label1.Size = new Size(763, 106);
             label1.TabIndex = 0;
@@ -353,12 +354,25 @@
             dateTimePickerKiralamaBitisTarihi.Size = new Size(250, 27);
             dateTimePickerKiralamaBitisTarihi.TabIndex = 33;
             // 
+            // yoneticiBtn
+            // 
+            yoneticiBtn.BackColor = SystemColors.ScrollBar;
+            yoneticiBtn.Font = new Font("Arial Rounded MT Bold", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            yoneticiBtn.Location = new Point(830, 57);
+            yoneticiBtn.Name = "yoneticiBtn";
+            yoneticiBtn.Size = new Size(188, 63);
+            yoneticiBtn.TabIndex = 34;
+            yoneticiBtn.Text = "Yönetici Panel";
+            yoneticiBtn.UseVisualStyleBackColor = false;
+            yoneticiBtn.Click += yoneticiBtn_Click;
+            // 
             // MusteriGiris
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(1872, 966);
+            Controls.Add(yoneticiBtn);
             Controls.Add(dateTimePickerKiralamaBitisTarihi);
             Controls.Add(dateTimePickerKiralamaTarihi);
             Controls.Add(txtPostaKodu1);
@@ -430,5 +444,6 @@
         private TextBox txtPostaKodu;
         private DateTimePicker dateTimePickerKiralamaTarihi;
         private DateTimePicker dateTimePickerKiralamaBitisTarihi;
+        private Button yoneticiBtn;
     }
 }
